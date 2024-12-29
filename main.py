@@ -2,6 +2,9 @@
 
 import selectors
 import socket
+import sys
+sys.path.append('mypymud')
+import mudnetwork
 
 all_sockets = []
 
