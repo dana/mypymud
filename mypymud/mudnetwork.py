@@ -1,11 +1,16 @@
 import selectors
 import socket
+import time
 
 class MUDNetwork:
     def __init__(self):
         self.all_sockets = []
-        print("init")
-        pass
+        self.last_tick = time.time()
+
+    def do_tick(self):
+        next_tick = self.last_tick + 0.1
+        now_tick = time.time()
+        print("do_tick")
 
     def _accept_wrapper(self, sock):
         conn, addr = sock.accept()
@@ -38,8 +43,6 @@ class MUDNetwork:
                 data["out_buffer"] = data["out_buffer"][sent:]
 
 
-
-
     def bind(self):
         self.sel = selectors.DefaultSelector()
 
@@ -58,12 +61,13 @@ class MUDNetwork:
     def loop(self):
         try:
             while True:
-                events = self.sel.select(timeout=None)
+                events = self.sel.select(timeout=0.1)
                 for key, mask in events:
                     if key.data is None:
                         self._accept_wrapper(key.fileobj)
                     else:
                         self._service_connection(key, mask)
+                self.do_tick()
         finally:
             self.sel.close()
 
