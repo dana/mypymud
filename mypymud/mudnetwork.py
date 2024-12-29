@@ -8,9 +8,13 @@ class MUDNetwork:
         self.last_tick = time.time()
 
     def _send_all_data(self):
-        #for s in all_connections:
-        pass
-        
+        for c in self.all_connections:
+            if c["data"]["out_buffer"]:
+                if c["conn"].fileno() > 0:
+                    sent = c["conn"].send(c["data"]["out_buffer"])
+                    c["data"]["out_buffer"] = c["data"]["out_buffer"][sent:]
+
+
     def do_tick(self):
         now_tick = time.time()
         next_tick = self.last_tick + 0.1
@@ -44,11 +48,11 @@ class MUDNetwork:
                 self.sel.unregister(sock)
                 sock.close()
 
-        if mask & selectors.EVENT_WRITE:
-            if data["out_buffer"]:
-                print(f"Echoing {data['out_buffer']!r} to {data['addr']}")
-                sent = sock.send(data["out_buffer"])
-                data["out_buffer"] = data["out_buffer"][sent:]
+        #if mask & selectors.EVENT_WRITE:
+        #    if data["out_buffer"]:
+        #        print(f"Echoing {data['out_buffer']!r} to {data['addr']}")
+        #        sent = sock.send(data["out_buffer"])
+        #        data["out_buffer"] = data["out_buffer"][sent:]
 
 
     def bind(self):
