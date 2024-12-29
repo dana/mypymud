@@ -3,6 +3,8 @@
 import selectors
 import socket
 
+all_sockets = []
+
 def accept_wrapper(sock):
     conn, addr = sock.accept() 
     print(f"Accepted connection from {addr}")
@@ -10,6 +12,7 @@ def accept_wrapper(sock):
     data = {"addr": addr, "in_buffer": b"", "out_buffer": b""}
     events = selectors.EVENT_READ | selectors.EVENT_WRITE
     sel.register(conn, events, data=data)
+    all_sockets.append({"conn":conn, "events":events, "data":data})
 
 def service_connection(key, mask):
     sock = key.fileobj
@@ -19,7 +22,8 @@ def service_connection(key, mask):
         recv_data = sock.recv(1024) 
         if recv_data:
             data["in_buffer"] += recv_data
-            data["out_buffer"] += recv_data
+            for s in all_sockets:
+                s["data"]["out_buffer"] += recv_data
         else:
             print(f"Closing connection to {data['addr']}")
             sel.unregister(sock)
