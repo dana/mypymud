@@ -3,6 +3,32 @@
 I need to get my Python programming skills back up to speed, so I'm writing
 an old school text MUD in Python
 
+# Classes
+
+## MUDNetwork
+
+Takes an optional dictionary of options, including:
+
+### port
+
+Which TCP port to bind to.  Defaults to 5000.
+
+### callback
+
+This is a code reference that's called by default ten times a second
+Defaults to nothing
+
+### callback_timer
+
+How many milliseconds between calls to callback.
+Defaults to 100
+
+## methods
+
+### bind
+
+### loop
+
 # NOTES
 
 ## Basic Structure
