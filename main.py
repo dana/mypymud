@@ -2,6 +2,8 @@
 
 import socket
 
+client_sockets = []
+
 def start_server():
     host = '0.0.0.0'
     port = 5000
@@ -18,6 +20,8 @@ def start_server():
     while True:
         client_socket, client_address = server_socket.accept()
         print(f"Connection from {client_address}")
+
+        client_socket.send("Connected to server\n".encode())
 
         data = client_socket.recv(1024)
         print(f"Received: {data.decode()}")
