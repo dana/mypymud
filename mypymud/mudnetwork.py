@@ -4,13 +4,21 @@ import time
 
 class MUDNetwork:
     def __init__(self):
-        self.all_sockets = []
+        self.all_connections = []
         self.last_tick = time.time()
 
+    def _send_all_data(self):
+        #for s in all_connections:
+        pass
+        
     def do_tick(self):
-        next_tick = self.last_tick + 0.1
         now_tick = time.time()
+        next_tick = self.last_tick + 0.1
+        if now_tick < next_tick:
+            return(None)
+        self.last_tick = now_tick
         print("do_tick")
+        self._send_all_data()
 
     def _accept_wrapper(self, sock):
         conn, addr = sock.accept()
@@ -19,7 +27,7 @@ class MUDNetwork:
         data = {"addr": addr, "in_buffer": b"", "out_buffer": b""}
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         self.sel.register(conn, events, data=data)
-        self.all_sockets.append({"conn":conn, "events":events, "data":data})
+        self.all_connections.append({"conn":conn, "events":events, "data":data})
 
     def _service_connection(self, key, mask):
         sock = key.fileobj
@@ -29,7 +37,7 @@ class MUDNetwork:
             recv_data = sock.recv(1024)
             if recv_data:
                 data["in_buffer"] += recv_data
-                for s in self.all_sockets:
+                for s in self.all_connections:
                     s["data"]["out_buffer"] += recv_data
             else:
                 print(f"Closing connection to {data['addr']}")
