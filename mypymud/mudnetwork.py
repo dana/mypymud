@@ -14,6 +14,13 @@ class MUDNetwork:
                     sent = c["conn"].send(c["data"]["out_buffer"])
                     c["data"]["out_buffer"] = c["data"]["out_buffer"][sent:]
 
+    def _process_all_data(self):
+        for read_conn in self.all_connections:
+            if read_conn["data"]["in_buffer"]:
+                for s in self.all_connections:
+                    s["data"]["out_buffer"] += read_conn["data"]["in_buffer"]
+                read_conn["data"]["in_buffer"] = b''
+
 
     def do_tick(self):
         now_tick = time.time()
@@ -23,6 +30,7 @@ class MUDNetwork:
         self.last_tick = now_tick
         print("do_tick")
         self._send_all_data()
+        self._process_all_data()
 
     def _accept_wrapper(self, sock):
         conn, addr = sock.accept()
@@ -41,8 +49,6 @@ class MUDNetwork:
             recv_data = sock.recv(1024)
             if recv_data:
                 data["in_buffer"] += recv_data
-                for s in self.all_connections:
-                    s["data"]["out_buffer"] += recv_data
             else:
                 print(f"Closing connection to {data['addr']}")
                 self.sel.unregister(sock)
