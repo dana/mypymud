@@ -5,29 +5,40 @@ an old school text MUD in Python
 
 # Classes
 
+## Characters
+A character is an entity that is or acts alive and can do things independently.
+Examples include players, rabbits, an evil skeleton.
+
+### Attributes
+
+- name - The short name of the chracter, is not unique
+- description - Longer textual description of the character
+
+### Methods
+
+## Players
+Some Characters are Players.  A Player is a human that logs in and controls
+one or more Characters.
+
+
+
 ## MUDNetwork
 
-Takes an optional dictionary of options, including:
+Handles low level networking, necessary to communicate with players.
 
-### port
+### Dictionary of Options
 
-Which TCP port to bind to.  Defaults to 5000.
+- port - Which TCP port to bind to.  Defaults to 5000.
 
-### callback
+- callback - This is a code reference that's called by default ten times a second, defaults to nothing
 
-This is a code reference that's called by default ten times a second
-Defaults to nothing
+- callback_timer - How many milliseconds between calls to callback.  Defaults to 100
 
-### callback_timer
+### methods
 
-How many milliseconds between calls to callback.
-Defaults to 100
+- bind
 
-## methods
-
-### bind
-
-### loop
+- loop
 
 # NOTES
 
@@ -48,4 +59,5 @@ method runs the loop.
 
 class MUDNetwork
 methods:
+
 
